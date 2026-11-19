@@ -1,11 +1,23 @@
-"""Konfigurasi & konstanta. Semua secret wajib dari environment variable."""
+"""Konfigurasi & konstanta. Semua secret wajib dari environment variable.
+
+Auto-detect provider:
+    - Kalau GEMINI_API_KEY di-set → pakai Google Gemini (recommended, free, available di Indonesia)
+    - Kalau hanya GROQ_API_KEY di-set → pakai Groq
+"""
 import os
 from pathlib import Path
 
-# === LLM (Groq) ===
+# === LLM Provider: Google Gemini (recommended) ===
+GEMINI_API_KEY: str = os.environ.get("GEMINI_API_KEY", "")
+GEMINI_MODEL: str = os.environ.get("GEMINI_MODEL", "gemini-2.0-flash")
+GEMINI_URL_BASE: str = "https://generativelanguage.googleapis.com/v1beta"
+
+# === LLM Provider: Groq (fallback) ===
 GROQ_API_KEY: str = os.environ.get("GROQ_API_KEY", "")
-GROQ_MODEL: str = os.environ.get("GROQ_MODEL", "llama-3.3-70b-versatile")
+GROQ_MODEL: str = os.environ.get("GROQ_MODEL", "llama-3.1-8b-instant")
 GROQ_URL: str = "https://api.groq.com/openai/v1/chat/completions"
+
+# === LLM common ===
 LLM_TIMEOUT_SEC: int = 60
 LLM_MAX_RETRIES: int = 3
 LLM_TEMPERATURE: float = 0.3
