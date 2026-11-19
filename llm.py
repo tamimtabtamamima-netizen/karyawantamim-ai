@@ -164,8 +164,9 @@ def chat(prompt: str, system: str = "") -> str:
                 raise RuntimeError(
                     f"{provider} HTTP 404 Not Found untuk model '{model_name}'. "
                     f"Model ini tidak tersedia/dihapus. Response: {body_404}. "
-                    f"Fix: set secret GEMINI_MODEL ke salah satu: "
-                    f"gemini-2.5-flash-lite, gemini-1.5-flash, atau gemini-1.5-flash-8b."
+                    f"Fix: set secret GEMINI_MODEL ke 'gemini-3.5-flash-lite' "
+                    f"(recommended untuk akun baru), atau alternatif: "
+                    f"gemini-1.5-flash, gemini-1.5-flash-8b."
                 )
             if e.code == 400:
                 body = e.read().decode("utf-8", errors="replace")[:300]
