@@ -1,0 +1,7 @@
+# Tidak ada dependency eksternal — semua pakai Python stdlib.
+# Python 3.11+ wajib.
+#
+# Kalau mau jalankan lokal:
+#   python karyawan_ai.py
+#
+# Tidak perlu pip install apa pun.
