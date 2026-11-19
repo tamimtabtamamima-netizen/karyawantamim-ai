@@ -8,13 +8,13 @@ import os
 from pathlib import Path
 
 # === LLM Provider: Google Gemini (recommended) ===
-GEMINI_API_KEY: str = os.environ.get("GEMINI_API_KEY", "")
-GEMINI_MODEL: str = os.environ.get("GEMINI_MODEL", "gemini-2.0-flash")
+GEMINI_API_KEY: str = os.environ.get("GEMINI_API_KEY") or ""
+GEMINI_MODEL: str = os.environ.get("GEMINI_MODEL") or "gemini-2.5-flash-lite"
 GEMINI_URL_BASE: str = "https://generativelanguage.googleapis.com/v1beta"
 
 # === LLM Provider: Groq (fallback) ===
-GROQ_API_KEY: str = os.environ.get("GROQ_API_KEY", "")
-GROQ_MODEL: str = os.environ.get("GROQ_MODEL", "llama-3.1-8b-instant")
+GROQ_API_KEY: str = os.environ.get("GROQ_API_KEY") or ""
+GROQ_MODEL: str = os.environ.get("GROQ_MODEL") or "llama-3.1-8b-instant"
 GROQ_URL: str = "https://api.groq.com/openai/v1/chat/completions"
 
 # === LLM common ===
