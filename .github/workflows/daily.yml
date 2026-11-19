@@ -28,8 +28,12 @@ jobs:
 
       - name: Run AI Employee
         env:
+          # Provider LLM — cukup set salah satu. Gemini recommended.
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_MODEL: ${{ secrets.GEMINI_MODEL }}
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
           GROQ_MODEL: ${{ secrets.GROQ_MODEL }}
+          # Tool opsional
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
           RESEND_FROM: ${{ secrets.RESEND_FROM }}
           EMAIL_TO: ${{ secrets.EMAIL_TO }}
