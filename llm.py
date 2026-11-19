@@ -5,6 +5,9 @@ Auto-detect provider berdasarkan env vars:
     - GROQ_API_KEY di-set → pakai Groq
     - Keduanya di-set → prefer Gemini
     - Tidak ada → raise RuntimeError
+
+Pre: minimal salah satu key ter-set di environment.
+Post: return string non-empty dari LLM, atau raise RuntimeError.
 """
 import json
 import random
@@ -17,6 +20,7 @@ from log import warn, info
 
 
 def _groq_chat(prompt: str, system: str) -> str:
+    """Call Groq chat completion (OpenAI-compatible)."""
     payload = json.dumps({
         "model": config.GROQ_MODEL,
         "messages": [
@@ -45,9 +49,13 @@ def _groq_chat(prompt: str, system: str) -> str:
 
 
 def _gemini_chat(prompt: str, system: str) -> str:
+    """Call Google Gemini generateContent API (v1beta)."""
     url = f"{config.GEMINI_URL_BASE}/models/{config.GEMINI_MODEL}:generateContent"
+
     body = {
-        "contents": [{"role": "user", "parts": [{"text": prompt}]}],
+        "contents": [
+            {"role": "user", "parts": [{"text": prompt}]}
+        ],
         "generationConfig": {
             "temperature": config.LLM_TEMPERATURE,
             "maxOutputTokens": config.LLM_MAX_TOKENS,
@@ -69,11 +77,12 @@ def _gemini_chat(prompt: str, system: str) -> str:
     with urllib.request.urlopen(req, timeout=config.LLM_TIMEOUT_SEC) as resp:
         data = json.loads(resp.read().decode("utf-8"))
 
+    # Gemini return error di body, bukan HTTP status
     if "error" in data:
         err = data["error"]
         raise RuntimeError(
             f"Gemini error: {err.get('message', 'unknown')} "
-            f"(code {err.get('code', '?')})"
+            f"(code {err.get('code', '?')}, status {err.get('status', '?')})"
         )
 
     candidates = data.get("candidates", [])
@@ -83,17 +92,33 @@ def _gemini_chat(prompt: str, system: str) -> str:
     parts = candidates[0].get("content", {}).get("parts", [])
     content = "".join(p.get("text", "") for p in parts)
     if not content or not content.strip():
+        # Mungkin diblokir safety filter
         finish_reason = candidates[0].get("finishReason", "?")
         raise RuntimeError(
-            f"Gemini empty content (finishReason={finish_reason})"
+            f"Gemini returned empty content (finishReason={finish_reason}). "
+            f"Mungkin diblokir safety filter — coba ubah prompt."
         )
     return content.strip()
 
 
 def chat(prompt: str, system: str = "") -> str:
+    """Call LLM. Auto-detect provider. Retry dengan backoff+full jitter.
+
+    Precondition:
+        - prompt non-empty
+        - minimal salah satu GEMINI_API_KEY atau GROQ_API_KEY ter-set
+    Postcondition:
+        - return non-empty string (stripped)
+    Complexity: O(1) per call (network bound)
+    Pure I/O: ya. Deterministic: tidak (network + LLM).
+
+    Raises:
+        RuntimeError: jika key tidak ada, auth gagal, atau semua retry habis.
+    """
     if not prompt or not prompt.strip():
         raise RuntimeError("prompt empty")
 
+    # Detect provider
     if config.GEMINI_API_KEY:
         provider = "gemini"
         call_fn = _gemini_chat
@@ -116,15 +141,39 @@ def chat(prompt: str, system: str = "") -> str:
             return call_fn(prompt, system)
         except urllib.error.HTTPError as e:
             last_err = f"HTTP {e.code}: {e.reason}"
+            # 401 = auth gagal, jangan retry
             if e.code == 401:
-                raise RuntimeError(f"{provider} auth failed (401)")
+                raise RuntimeError(
+                    f"{provider} auth failed (401). API key salah/expired. "
+                    f"Buat ulang key di dashboard provider."
+                )
+            # 403 = forbidden (region block, quota habis, dll). Tidak ada gunanya retry.
             if e.code == 403:
                 raise RuntimeError(
-                    f"{provider} HTTP 403 Forbidden. Ganti provider/model."
+                    f"{provider} HTTP 403 Forbidden. Penyebab umum: "
+                    f"(1) model tidak tersedia untuk akun Anda, "
+                    f"(2) region diblokir, (3) free tier habis. "
+                    f"Fix: ganti provider atau ganti model via secret {provider.upper()}_MODEL."
+                )
+            # 404 = model tidak ditemukan. Capture body untuk info lebih lengkap.
+            if e.code == 404:
+                try:
+                    body_404 = e.read().decode("utf-8", errors="replace")[:500]
+                except Exception:
+                    body_404 = "(no body)"
+                raise RuntimeError(
+                    f"{provider} HTTP 404 Not Found untuk model '{model_name}'. "
+                    f"Model ini tidak tersedia/dihapus. Response: {body_404}. "
+                    f"Fix: set secret GEMINI_MODEL ke salah satu: "
+                    f"gemini-2.5-flash-lite, gemini-1.5-flash, atau gemini-1.5-flash-8b."
                 )
             if e.code == 400:
                 body = e.read().decode("utf-8", errors="replace")[:300]
-                raise RuntimeError(f"{provider} HTTP 400. Body: {body}")
+                raise RuntimeError(
+                    f"{provider} HTTP 400 Bad Request. Body: {body}. "
+                    f"Cek model name atau prompt format."
+                )
+            # 429 / 5xx: retry dengan backoff
             if e.code == 429 or 500 <= e.code < 600:
                 wait = random.uniform(0, min(2 ** attempt, 30))
                 warn("LLM retry", provider=provider, attempt=attempt,
@@ -132,6 +181,7 @@ def chat(prompt: str, system: str = "") -> str:
                      err=last_err)
                 time.sleep(wait)
                 continue
+            # HTTP code lain: tidak retry
             raise RuntimeError(f"{provider} HTTP error: {last_err}")
         except urllib.error.URLError as e:
             last_err = f"network: {e.reason}"
