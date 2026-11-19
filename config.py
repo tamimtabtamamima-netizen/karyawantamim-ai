@@ -9,7 +9,7 @@ from pathlib import Path
 
 # === LLM Provider: Google Gemini (recommended) ===
 GEMINI_API_KEY: str = os.environ.get("GEMINI_API_KEY") or ""
-GEMINI_MODEL: str = os.environ.get("GEMINI_MODEL") or "gemini-2.5-flash-lite"
+GEMINI_MODEL: str = os.environ.get("GEMINI_MODEL") or "gemini-3.5-flash-lite"
 GEMINI_URL_BASE: str = "https://generativelanguage.googleapis.com/v1beta"
 
 # === LLM Provider: Groq (fallback) ===
