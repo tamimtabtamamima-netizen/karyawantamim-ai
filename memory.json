@@ -34,9 +34,14 @@
       "ts": "2026-11-24T09:56:24.717472+00:00",
       "task": "daily_digest",
       "result": "- **Tahun 2035 Datang Lebih Awal (2035 Came Early)**\n  Artikel ini membahas bagaimana perubahan teknologi tertentu telah mempercepat lini masa industri jauh melampaui perkiraan awal. Bagi developer dan CTO, pemahaman ini krusial untuk mengantisipasi pergeseran arsitektur sistem sebelum infrastruktur"
+    },
+    {
+      "ts": "2026-11-25T09:58:05.420135+00:00",
+      "task": "daily_digest",
+      "result": "- **Perkalian Matriks adalah Θ(n^2.25) [pdf] (Matrix Multiplication is Θ(n^2.25) [pdf])**\n  Penelitian terbaru dari OpenAI ini menunjukkan terobosan teoretis dalam kompleksitas waktu perkalian matriks yang sangat penting untuk efisiensi komputasi AI skala besar. Peningkatan batas bawah ini berpotens"
     }
   ],
-  "context": "[2026-11-24T09:56:24.717479+00:00] daily_digest: - **Tahun 2035 Datang Lebih Awal (2035 Came Early)**\n  Artikel ini membahas bagaimana perubahan teknologi tertentu telah mempercepat lini masa industri jauh melampaui perkiraan awal. Bagi developer da",
+  "context": "[2026-11-25T09:58:05.420139+00:00] daily_digest: - **Perkalian Matriks adalah Θ(n^2.25) [pdf] (Matrix Multiplication is Θ(n^2.25) [pdf])**\n  Penelitian terbaru dari OpenAI ini menunjukkan terobosan teoretis dalam kompleksitas waktu perkalian matriks",
   "created_at": "2026-11-19T09:25:04.855703+00:00",
-  "updated_at": "2026-11-24T09:56:24.717488+00:00"
+  "updated_at": "2026-11-25T09:58:05.420146+00:00"
 }
