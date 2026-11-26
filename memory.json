@@ -39,9 +39,14 @@
       "ts": "2026-11-25T09:58:05.420135+00:00",
       "task": "daily_digest",
       "result": "- **Perkalian Matriks adalah Θ(n^2.25) [pdf] (Matrix Multiplication is Θ(n^2.25) [pdf])**\n  Penelitian terbaru dari OpenAI ini menunjukkan terobosan teoretis dalam kompleksitas waktu perkalian matriks yang sangat penting untuk efisiensi komputasi AI skala besar. Peningkatan batas bawah ini berpotens"
+    },
+    {
+      "ts": "2026-11-26T09:57:16.838049+00:00",
+      "task": "daily_digest",
+      "result": "- **Betapa Besarnya Skala Perubahan yang Sedang Terjadi (Holy shit holy shit holy shit holy shit: The magnitude of what’s now happening)**\n  Artikel ini menyoroti percepatan luar biasa dari perkembangan teknologi AI yang sedang berlangsung di industri saat ini. Bagi para developer dan CTO, pemahaman"
     }
   ],
-  "context": "[2026-11-25T09:58:05.420139+00:00] daily_digest: - **Perkalian Matriks adalah Θ(n^2.25) [pdf] (Matrix Multiplication is Θ(n^2.25) [pdf])**\n  Penelitian terbaru dari OpenAI ini menunjukkan terobosan teoretis dalam kompleksitas waktu perkalian matriks",
+  "context": "[2026-11-26T09:57:16.838052+00:00] daily_digest: - **Betapa Besarnya Skala Perubahan yang Sedang Terjadi (Holy shit holy shit holy shit holy shit: The magnitude of what’s now happening)**\n  Artikel ini menyoroti percepatan luar biasa dari perkembang",
   "created_at": "2026-11-19T09:25:04.855703+00:00",
-  "updated_at": "2026-11-25T09:58:05.420146+00:00"
+  "updated_at": "2026-11-26T09:57:16.838059+00:00"
 }
